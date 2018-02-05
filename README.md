@@ -1,6 +1,6 @@
 > A fork from divamgupta/image-segmentation-keras, I changed the original theano backend into tensorflow backend, using Python3.
 
-# Image Segmentation Keras : Implementation of Segnet, FCN, UNet and other models in Keras.
+# Image Segmentation Keras
 
 Implememnation of various Deep Image Segmentation models in keras. 
 
@@ -10,11 +10,10 @@ Implememnation of various Deep Image Segmentation models in keras.
 </p>
 
 
-## Models 
-
-* FCN8
-* FCN32
-* Simple Segnet
-* VGG Segnet 
-* U-Net
-* VGG U-Net
+* Models:
+	* FCN8
+	* FCN32
+	* Simple Segnet
+	* VGG Segnet 
+	* U-Net
+	* VGG U-Net
