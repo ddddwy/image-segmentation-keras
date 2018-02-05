@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Feb  5 20:39:38 2018
 
-
-# todo upgrade to keras 2.0
+@author: Wanyu Du
+"""
 
 from keras.models import Sequential
 from keras.layers import Reshape
@@ -18,14 +21,13 @@ from keras.layers.embeddings import Embedding
 from keras.utils import np_utils
 from keras.regularizers import ActivityRegularizer
 from keras import backend as K
+import LoadBatches
 
 
-
-
-
-def Unet (nClasses , optimizer=None , input_width=360 , input_height=480 , nChannels=1 ): 
+def Unet (nClasses, optimizer=None, input_width=360, input_height=480, nChannels=3): 
     
     inputs = Input((nChannels, input_height, input_width))
+    
     conv1 = Convolution2D(32, 3, 3, activation='relu', border_mode='same')(inputs)
     conv1 = Dropout(0.2)(conv1)
     conv1 = Convolution2D(32, 3, 3, activation='relu', border_mode='same')(conv1)
@@ -54,16 +56,38 @@ def Unet (nClasses , optimizer=None , input_width=360 , input_height=480 , nChan
     conv6 = core.Reshape((nClasses,input_height*input_width))(conv6)
     conv6 = core.Permute((2,1))(conv6)
 
-
     conv7 = core.Activation('softmax')(conv6)
 
     model = Model(input=inputs, output=conv7)
 
     if not optimizer is None:
-	    model.compile(loss="categorical_crossentropy", optimizer= optimizer , metrics=['accuracy'] )
+	    model.compile(loss="categorical_crossentropy", optimizer= optimizer, metrics=['accuracy'])
 	
     return model
 	
-	
-	
 
+if __name__ == '__main__':
+    m = Unet(nClasses=101, optimizer='rmsprop', input_height=150, input_width=150)
+    print("Model output shape", m.output_shape)
+    
+    output_height = m.outputHeight
+    output_width = m.outputWidth
+    epochs=5
+    train_images_path='../input/dataset1/images_prepped_train/'
+    save_weights_path='../input/weights/'
+    train_segs_path='../input/dataset1/annotations_prepped_train/'
+    train_batch_size=10
+    n_classes=101
+    input_height=150
+    input_width=150
+    
+    G = LoadBatches.imageSegmentationGenerator(train_images_path, train_segs_path, 
+                                               train_batch_size, n_classes, 
+                                               input_height, input_width, 
+                                               output_height, output_width)
+    
+    for ep in range(epochs):
+    	m.fit_generator(G, 30, epochs=1)
+    	m.save_weights(save_weights_path + "." + str(ep))
+    	m.save(save_weights_path + ".model." + str(ep))
+   

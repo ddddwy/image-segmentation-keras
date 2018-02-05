@@ -1,9 +1,12 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Feb  5 20:43:44 2018
 
-
+@author: Wanyu Du
+"""
 
 import h5py
 import os
-
 
 def loadWeightsPartial( model , weights_path , n_layers ):
 
@@ -15,5 +18,3 @@ def loadWeightsPartial( model , weights_path , n_layers ):
 	    weights = [g['param_{}'.format(p)] for p in range(g.attrs['nb_params'])]
 	    model.layers[k].set_weights(weights)
 	f.close()
-
-	

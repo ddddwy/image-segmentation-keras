@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Feb  5 22:15:46 2018
 
-# todo upgrade to keras 2.0
-
+@author: think
+"""
 
 from keras.models import Sequential
 from keras.layers import Reshape
@@ -15,22 +18,18 @@ from keras.layers.advanced_activations import LeakyReLU
 from keras.optimizers import Adam , SGD
 from keras.layers.embeddings import Embedding
 from keras.utils import np_utils
-# from keras.regularizers import ActivityRegularizer
 from keras import backend as K
+import keras
 
 
-
-
-
-def segnet(nClasses , optimizer=None , input_height=360, input_width=480 ):
-
+def segnet(nClasses, optimizer=None, input_height=360, input_width=480):
 	kernel = 3
 	filter_size = 64
 	pad = 1
 	pool_size = 2
 
-	model = models.Sequential()
-	model.add(Layer(input_shape=(3, input_height , input_width )))
+	model = keras.models.Sequential()
+	model.add(Layer(input_shape=(input_height, input_width, 3)))
 
 	# encoder
 	model.add(ZeroPadding2D(padding=(pad,pad)))
@@ -80,8 +79,8 @@ def segnet(nClasses , optimizer=None , input_height=360, input_width=480 ):
 
 	model.add(Convolution2D( nClasses , 1, 1, border_mode='valid',))
 
-	model.outputHeight = model.output_shape[-2]
-	model.outputWidth = model.output_shape[-1]
+	model.outputHeight = model.output_shape[-3]
+	model.outputWidth = model.output_shape[-2]
 
 
 	model.add(Reshape(( nClasses ,  model.output_shape[-2]*model.output_shape[-1]   ), input_shape=( nClasses , model.output_shape[-2], model.output_shape[-1]  )))
